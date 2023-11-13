@@ -25,6 +25,8 @@ class Graphic:
     return self
 
   def points_2D(self, **args) -> None:    
+    
+    # switch case
     if self.p_type in self.plot_type:
       self.plot_type[self.p_type](**args)
 
