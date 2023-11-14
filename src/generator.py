@@ -2,7 +2,7 @@ from sklearn.datasets import make_blobs
 from sklearn.datasets import make_moons
 from sklearn.datasets import make_circles
 from sklearn.datasets import make_s_curve
-from graphic import Graphic, Plot
+from graphic import Graphic
 import random
 
 class Generator:
@@ -15,6 +15,14 @@ class Generator:
         self.factor = factor
         self.rand = lambda : random.randint(0, 0xFFFFFFFF - 1)
 
+    def config(self, samp=None, feat=None, clusters=None, noise=None, factor=None, rand=None):
+        self.samp = samp if samp != None else self.samp
+        self.feat = feat if feat != None else self.feat
+        self.clusters = clusters if clusters != None else self.clusters
+        self.noise = noise if noise != None else self.noise
+        self.factor = factor if factor != None else self.factor
+        self.rand = rand if rand != None else self.rand
+
     def make_blobs(self, to_print: bool=False) -> tuple:
         X, y = make_blobs (
             n_samples=self.samp,
@@ -23,8 +31,8 @@ class Generator:
             random_state=self.rand()
         )
         if to_print:
-            self.g.select(Plot.cluster).points_2D(X=X, y=y)
-            self.g.select(Plot.indistinguishable).points_2D(X=X)
+            self.g.sample(X=X, y=y)
+            
         return X, y
 
 
@@ -35,8 +43,8 @@ class Generator:
             random_state=self.rand()
         )
         if to_print:
-            self.g.select(Plot.cluster).points_2D(X=X, y=y)
-            self.g.select(Plot.indistinguishable).points_2D(X=X)
+            self.g.sample(X=X, y=y)
+            
         return X, y
 
 
@@ -48,19 +56,8 @@ class Generator:
             random_state=self.rand()
         )
         if to_print:
-            self.g.select(Plot.cluster).points_2D(X=X, y=y)
-            self.g.select(Plot.indistinguishable).points_2D(X=X)
-        return X, y
-
-
-    def make_s_curve(self, to_print: bool=False) -> tuple:
-        X, y = make_s_curve(
-            n_samples=self.samp,
-            noise=self.noise,
-            random_state=self.rand()
-        )
-        if to_print:
-            self.g.select(Plot.indistinguishable).points_2D(X=X[:,0], y=y)
+            self.g.sample(X=X, y=y)
+            
         return X, y
 
     # TODO implement this function here and in the notebook
