@@ -1,12 +1,13 @@
 from sklearn.datasets import make_blobs
 from sklearn.datasets import make_moons
 from sklearn.datasets import make_circles
-from sklearn.datasets import make_s_curve
 from graphic import Graphic
 import random
 
+from timer import timer
+
 class Generator:
-    def __init__(self, samp=300, feat=2, clusters=6, noise=0.05, factor=0.5):
+    def __init__(self, samp=1200, feat=2, clusters=6, noise=0.05, factor=0.5):
         self.g = Graphic()
         self.samp = samp
         self.feat = feat
@@ -23,6 +24,7 @@ class Generator:
         self.factor = factor if factor != None else self.factor
         self.rand = rand if rand != None else self.rand
 
+    @timer
     def make_blobs(self, to_print: bool=False) -> tuple:
         X, y = make_blobs (
             n_samples=self.samp,
@@ -31,11 +33,10 @@ class Generator:
             random_state=self.rand()
         )
         if to_print:
-            self.g.sample(X=X, y=y)
-            
+            self.g.sample(X=X, y=y)            
         return X, y
 
-
+    @timer
     def make_moons(self, to_print: bool=False) -> tuple:
         X, y = make_moons(
             n_samples=self.samp,
@@ -44,10 +45,9 @@ class Generator:
         )
         if to_print:
             self.g.sample(X=X, y=y)
-            
         return X, y
 
-
+    @timer
     def make_circles(self, to_print: bool=False) -> tuple:
         X, y = make_circles(
             n_samples=self.samp,
@@ -57,9 +57,9 @@ class Generator:
         )
         if to_print:
             self.g.sample(X=X, y=y)
-            
         return X, y
-
+    
     # TODO implement this function here and in the notebook
+    @timer
     def make_hard_config(self, n:int, to_print: bool=False) -> tuple:
         pass
