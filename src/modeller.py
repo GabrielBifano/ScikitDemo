@@ -7,7 +7,7 @@ from sklearn.cluster import KMeans
 from sklearn.cluster import DBSCAN
 from sklearn.metrics import silhouette_score
 
-from ansi import BOLD, RESET, CYAN, GREEN
+from ansi import ANSI
 
 class Modeller:
     
@@ -77,9 +77,10 @@ class Modeller:
 
     def keys(self, p: bool=True):
         if p == False: return self.cache.keys()
-        print(f'models inside {BOLD}{GREEN}cache:{RESET}')
+        a = ANSI()
+        print(f'models inside {a.b}{a.green}cache:{a.res}')
         for key in self.cache.keys():
-            print(f'  {CYAN}* {key}{RESET}')
+            print(f'  {a.cyan}* {key}{a.res}')
 
     def dump_cache(self):
         self.cache.clear()

@@ -1,5 +1,5 @@
 from time import perf_counter
-from ansi import BOLD, RESET, CYAN, GREEN
+from ansi import ANSI
 
 def timer(func):    
 
@@ -7,9 +7,11 @@ def timer(func):
         init = perf_counter()
         result = func(*args, **kwargs)
         end  = perf_counter()
+        
+        a = ANSI()
         print (
-            f'The method {BOLD}{CYAN} {func.__name__}{RESET}  '
-            f'took {BOLD}{GREEN}{(end - init):.4e}{RESET} seconds to run'
+            f'The method {a.b}{a.cyan} {func.__name__}{a.res}  '
+            f'took {a.b}{a.green}{(end - init):.4e}{a.res} seconds to run'
         )
         return result
     return wrapper
