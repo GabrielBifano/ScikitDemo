@@ -45,6 +45,24 @@ class Modeller:
         self.compute_distances = False
 
 
+    def dump_cache(self) -> None:
+        self.cache.clear()
+
+    def keys(self, plot: bool=True):
+        if plot == False:
+            return self.cache.keys()
+
+        a = ANSI()
+        if len(self.cache) == 0:
+            print(f'{a.b}{a.green}Cache{a.res} is {a.b}{a.red}empty{a.res}')
+            return self.cache.keys()
+        
+        print(f'Models inside {a.b}{a.green}cache:{a.res}')
+        for key in self.cache.keys():
+            print(f'  {a.cyan}* {key}{a.res}')
+        return self.cache.keys()
+
+
     def config(self,
             max_iter=       None,
             init=           None,
@@ -99,20 +117,6 @@ class Modeller:
 
         return self
 
-
-    def dump_cache(self) -> None:
-        self.cache.clear()
-
-    def keys(self, plot: bool=True):
-        if plot == False:
-            return self.cache.keys()
-        
-        a = ANSI()
-        print(f'models inside {a.b}{a.green}cache:{a.res}')
-        for key in self.cache.keys():
-            print(f'  {a.cyan}* {key}{a.res}')
-        return self.cache.keys()
-
     #TODO def metrics() must print all specs of a given model
     def metrics(self, key):
         pass
@@ -140,6 +144,7 @@ class Modeller:
         opt = range_cl[np.argmax(scores)]
         return opt
 
+
     @timer
     def kmeans(self, data: pd.DataFrame, k: int, key: str='kmeans') -> tuple:
         model = KMeans(
@@ -155,9 +160,8 @@ class Modeller:
         )
         model.fit(data)
         self.cache[key] = model
-        processed = data.copy()
-        processed['labels'] = model.labels_
-        return (processed, model.labels_, key)
+        data['labels'] = model.labels_
+        return (data, model.labels_, key)
 
     @timer
     def dbscan(self, data: pd.DataFrame, eps: float, key: str='dbscan') -> tuple:
@@ -173,9 +177,8 @@ class Modeller:
         )
         model.fit(data)
         self.cache[key] = model
-        processed = data.copy()
-        processed['labels'] = model.labels_
-        return (processed, model.labels_, key)
+        data['labels'] = model.labels_
+        return (data, model.labels_, key)
 
     @timer
     def agglomerative_clustering(self, data: pd.DataFrame, k: int, key: str='ag-clustering') -> tuple:
@@ -191,10 +194,8 @@ class Modeller:
         )
         model.fit(data)
         self.cache[key] = model
-        processed = data.copy()
-        processed['labels'] = model.labels_
-        return (processed, model.labels_, key)
-
+        data['labels'] = model.labels_
+        return (data, model.labels_, key)
 
     @timer
     def hdbscan():
