@@ -14,6 +14,11 @@ class Modeller:
     
     def __init__(self):
         self.cache = {}
+        self.type_dict = {
+            KMeans: self.kmeans_metrics,
+            DBSCAN: self.dbscan_metrics,
+            AgglomerativeClustering: self.ag_metrics,
+        }
         self.rand = lambda : random.randint(0, 0xFFFFFFFF - 1)
         
         '''K-Means configs'''
@@ -117,9 +122,26 @@ class Modeller:
 
         return self
 
-    #TODO def metrics() must print all specs of a given model
+
+    def save_model(self, model, key: str) -> None:
+        self.cache[key] = model
+
     def metrics(self, key):
-        pass
+        # switch case, because the attributes inside
+        # each type of model are not the same
+        model = self.cache[key]
+        self.type_dict[type(model)](model)
+
+    def kmeans_metrics(self, model):
+        print('aloha kmeans')
+
+    def dbscan_metrics(self, model):
+        print('aloha dbscan')
+
+    def ag_metrics(self, model):
+        print('aloha agc')
+
+
 
     @timer
     def optimal_silhouette(self, data:pd.DataFrame, plot:bool=False, from_:int=2, to_:int=15) -> int:
@@ -159,7 +181,7 @@ class Modeller:
             random_state = self.rand()
         )
         model.fit(data)
-        self.cache[key] = model
+        self.save_model(model, key)
         data['labels'] = model.labels_
         return (data, model.labels_, key)
 
@@ -176,7 +198,7 @@ class Modeller:
             n_jobs = self.n_jobs,
         )
         model.fit(data)
-        self.cache[key] = model
+        self.save_model(model, key)
         data['labels'] = model.labels_
         return (data, model.labels_, key)
 
@@ -193,7 +215,7 @@ class Modeller:
             compute_distances = self.compute_distances,
         )
         model.fit(data)
-        self.cache[key] = model
+        self.save_model(model, key)
         data['labels'] = model.labels_
         return (data, model.labels_, key)
 
