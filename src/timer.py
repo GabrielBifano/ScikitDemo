@@ -1,7 +1,7 @@
 from time import perf_counter
 from ansi import ANSI
 
-def timer(func):    
+def timer(func):
 
     def wrapper(*args, **kwargs):
         init = perf_counter()
