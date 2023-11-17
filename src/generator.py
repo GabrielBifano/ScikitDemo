@@ -23,6 +23,7 @@ class Generator:
         self.noise = noise if noise != None else self.noise
         self.factor = factor if factor != None else self.factor
         self.rand = rand if rand != None else self.rand
+        return self
 
     @timer
     def make_blobs(self, to_print: bool=False) -> tuple:
