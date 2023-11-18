@@ -1,7 +1,6 @@
 import random
 import numpy as np
 import pandas as pd
-
 from timer import timer
 from sklearn.cluster import KMeans
 from sklearn.cluster import DBSCAN
@@ -14,11 +13,6 @@ class Modeller:
     
     def __init__(self):
         self.cache = {}
-        self.type_dict = {
-            KMeans: self.kmeans_metrics,
-            DBSCAN: self.dbscan_metrics,
-            AgglomerativeClustering: self.ag_metrics,
-        }
         self.rand = lambda : random.randint(0, 0xFFFFFFFF - 1)
         
         '''K-Means configs'''
@@ -126,22 +120,9 @@ class Modeller:
     def save_model(self, model, key: str) -> None:
         self.cache[key] = model
 
-    def metrics(self, key):
-        # switch case, because the attributes inside
-        # each type of model are not the same
-        model = self.cache[key]
-        self.type_dict[type(model)](model)
-
-    def kmeans_metrics(self, model):
-        print('aloha kmeans')
-
-    def dbscan_metrics(self, model):
-        print('aloha dbscan')
-
-    def ag_metrics(self, model):
-        print('aloha agc')
-
-
+    def get_model(self, key: str):
+        if key not in self.cache.keys(): return None
+        return self.cache[key]
 
     @timer
     def optimal_silhouette(self, data:pd.DataFrame, plot:bool=False, from_:int=2, to_:int=15) -> int:
