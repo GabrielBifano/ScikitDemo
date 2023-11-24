@@ -8,9 +8,12 @@ class Graphic:
     self.__third_color      = "purple"
     self.__default_color    = "black"
 
-  def sample_many(self, dataframes, nrows, ncols):
+  def sample_many(self, dataframes, nrows: int, ncols: int, figsize: tuple=(15, 10)):
+    prop = ncols/nrows
+    a_prop = nrows/ncols
+    
     plt.style.use('dark_background')
-    _, axes = plt.subplots(nrows=nrows, ncols=ncols, figsize=(15, 10))
+    _, axes = plt.subplots(nrows=nrows, ncols=ncols, figsize=figsize)
     plt.subplots_adjust(wspace=0.3, hspace=0.3)
     axes_it = iter(axes.flatten())
     

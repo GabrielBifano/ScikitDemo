@@ -124,7 +124,6 @@ class Modeller:
         if key not in self.cache.keys(): return None
         return self.cache[key]
 
-    @timer
     def optimal_silhouette(self, data:pd.DataFrame, plot:bool=False, from_:int=2, to_:int=15) -> int:
         if from_ < 2: raise ValueError("from_ must be greater than 1")
         if from_ >= to_: raise ValueError("from_ must be less than to_")
@@ -147,8 +146,6 @@ class Modeller:
         opt = range_cl[np.argmax(scores)]
         return opt
 
-
-    @timer
     def kmeans(self, data: pd.DataFrame, k: int, key: str='kmeans') -> tuple:
         model = KMeans(
             n_clusters = k,
@@ -166,7 +163,6 @@ class Modeller:
         data['labels'] = model.labels_
         return (data, model.labels_, key)
 
-    @timer
     def dbscan(self, data: pd.DataFrame, eps: float, key: str='dbscan') -> tuple:
         model = DBSCAN(
             eps=eps,
@@ -183,7 +179,6 @@ class Modeller:
         data['labels'] = model.labels_
         return (data, model.labels_, key)
 
-    @timer
     def agglomerative_clustering(self, data: pd.DataFrame, k: int, key: str='ag-clustering') -> tuple:
         model = AgglomerativeClustering(
             n_clusters = k,
@@ -200,6 +195,5 @@ class Modeller:
         data['labels'] = model.labels_
         return (data, model.labels_, key)
 
-    @timer
     def hdbscan():
         pass
