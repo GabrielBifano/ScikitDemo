@@ -9,8 +9,6 @@ class Graphic:
     self.__default_color    = "black"
 
   def sample_many(self, dataframes, nrows: int, ncols: int, figsize: tuple=(15, 10)):
-    prop = ncols/nrows
-    a_prop = nrows/ncols
     
     plt.style.use('dark_background')
     _, axes = plt.subplots(nrows=nrows, ncols=ncols, figsize=figsize)
