@@ -11,8 +11,9 @@ class Graphic:
   def sample(self, X, y=[None]) -> None:
     if type(X) == pd.DataFrame: X = X.values
     if y.all() == None: y = [0]*len(X)
-    plt.scatter(X[:, 0], X[:, 1], c=y, cmap='viridis', marker='.')
+
+    plt.style.use('dark_background')
+    plt.scatter(X[:, 0], X[:, 1], c=y, cmap='viridis', marker='.', edgecolors='black')
+    plt.grid(linewidth=0.5, linestyle='--', alpha=0.2)
     plt.title("Scatter plot of samples in dataset")
-    plt.xlabel("Feature 1")
-    plt.ylabel("Feature 2")
     plt.show()
