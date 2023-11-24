@@ -2,3 +2,4 @@ venv
 notes.md
 src/test.py
 src/__pycache__
+*.csv
