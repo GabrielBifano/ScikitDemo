@@ -5,6 +5,7 @@ from timer import timer
 from sklearn.cluster import KMeans
 from sklearn.cluster import DBSCAN
 from sklearn.cluster import AgglomerativeClustering
+from sklearn.mixture import GaussianMixture
 from sklearn.metrics import silhouette_score
 
 from ansi import ANSI
@@ -43,6 +44,16 @@ class Modeller:
         self.distance_threshold = None
         self.compute_distances = False
 
+        #TODO GAussian Mixture
+        '''Gaussian Mixture'''
+        self.covariance_type = 'full'
+        # self.
+        # self.
+        # self.
+        # self.
+        # self.
+        # self.
+        # self.
 
     def dump_cache(self) -> None:
         self.cache.clear()
@@ -148,6 +159,23 @@ class Modeller:
 
     def kmeans(self, data: pd.DataFrame, k: int, key: str='kmeans') -> tuple:
         model = KMeans(
+            n_clusters = k,
+            max_iter = self.max_iter,
+            init = self.init,
+            n_init = self.n_init,
+            tol = self.tol,
+            verbose = self.verbose,
+            copy_x = self.copy_x,
+            algorithm = self.km_algorithm,
+            random_state = self.rand()
+        )
+        model.fit(data)
+        self.save_model(model, key)
+        data['labels'] = model.labels_
+        return (data, model.labels_, key)
+
+    def gmixture(self, data: pd.DataFrame, k: int, key: str='g-mixture') -> tuple:
+        model = GaussianMixture(
             n_clusters = k,
             max_iter = self.max_iter,
             init = self.init,
