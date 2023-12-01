@@ -47,7 +47,7 @@ class Modeller:
                 init = 'k-means++',
                 max_iter = 300,
                 n_init = 10,
-                random_state = self.rand()
+                random_state = self.rand(),
             )
             labels = model.fit_predict(data)
             avg = silhouette_score(data, labels)
@@ -61,36 +61,36 @@ class Modeller:
     def kmeans(self, data: pd.DataFrame, k: int, key: str='kmeans') -> tuple:
         model = KMeans(
             n_clusters = k,
-            max_iter = self.max_iter,
-            init = self.init,
-            n_init = self.n_init,
+            max_iter = self.kmeans_max_iter,
+            init = self.kmeans_init,
+            n_init = self.kmeans_n_init,
             tol = self.kmeans_tol,
-            verbose = self.verbose,
-            copy_x = self.copy_x,
-            algorithm = self.km_algorithm,
-            random_state = self.rand()
+            verbose = self.kmeans_verbose,
+            copy_x = self.kmeans_copy_x,
+            algorithm = self.kmeans_algorithm,
+            random_state = self.rand(),
         )
         model.fit(data)
         self.save_model(model, key)
         data['labels'] = model.labels_
         return (data, model.labels_, key)
 
-    def gmixture(self, data: pd.DataFrame, n_components: int, key: str='g-mixture') -> tuple:
+    def gmixture(self, data: pd.DataFrame, n_components: int, key: str='gmixture') -> tuple:
         model = GaussianMixture(
             n_components = n_components,
-            covariance_type = self.covariance_type,
+            covariance_type = self.gmixture_covariance_type,
             tol = self.gmixture_tol,
-            reg_covar = self.reg_covar,
+            reg_covar = self.gmixture_reg_covar,
             max_iter = self.gmixture_max_iter,
             n_init = self.gmixture_n_init,
-            init_params = self.init_params,
-            weights_init = self.weights_init,
-            means_init = self.means_init,
-            precisions_init = self.precisions_init,
+            init_params = self.gmixture_init_params,
+            weights_init = self.gmixture_weights_init,
+            means_init = self.gmixture_means_init,
+            precisions_init = self.gmixture_precisions_init,
             random_state = self.rand(),
-            warm_start = self.warm_start,
-            verbose = self.verbose,
-            verbose_interval = self.verbose_interval,
+            warm_start = self.gmixture_warm_start,
+            verbose = self.gmixture_verbose,
+            verbose_interval = self.gmixture_verbose_interval,
         )
         model.fit(data)
         self.save_model(model, key)
@@ -113,6 +113,30 @@ class Modeller:
         data['labels'] = model.labels_
         return (data, model.labels_, key)
 
+    def hdbscan(self, key: str='hdbscan'):
+        pass
+
+    def affprop(self, key: str='affprop'):
+        pass
+
+    def agcluster(self, key: str='agcluster'):
+        pass
+
+    def featagg(self, key: str='featagg'):
+        pass
+
+    def birch(self, key: str='birch'):
+        pass
+
+    def meanshift(self, key: str='meanshift'):
+        pass
+
+    def optics(self, key: str='optics'):
+        pass
+
+    def spcluster(self, key: str='spcluster'):
+        pass
+
     def agglomerative_clustering(self, data: pd.DataFrame, k: int, key: str='ag-clustering') -> tuple:
         model = AgglomerativeClustering(
             n_clusters = k,
@@ -129,8 +153,6 @@ class Modeller:
         data['labels'] = model.labels_
         return (data, model.labels_, key)
 
-    def hdbscan():
-        pass
 
 
 
