@@ -3,9 +3,11 @@ import numpy as np
 import pandas as pd
 from timer import timer
 from sklearn.cluster import KMeans
-from sklearn.cluster import DBSCAN
-from sklearn.cluster import AgglomerativeClustering
 from sklearn.mixture import GaussianMixture
+from sklearn.cluster import BisectingKMeans
+from sklearn.cluster import DBSCAN
+from sklearn.cluster import HDBSCAN
+from sklearn.cluster import AgglomerativeClustering
 from sklearn.metrics import silhouette_score
 
 from ansi import ANSI
@@ -94,8 +96,27 @@ class Modeller:
         )
         model.fit(data)
         self.save_model(model, key)
+        data['labels'] = model.predict(data)
+        return (data, data['labels'], key)
+
+    def bskmeans(self, data: pd.DataFrame, k: int, key: str='kmeans') -> tuple:
+        model = BisectingKMeans(
+            n_clusters = k,
+            init = self.bskmeans_init,
+            n_init = self.bskmeans_n_init,
+            random_state = self.rand(),
+            max_iter = self.bskmeans_max_iter,
+            verbose = self.bskmeans_verbose,
+            tol = self.bskmeans_tol,
+            copy_x = self.bskmeans_copy_x,
+            algorithm = self.bskmeans_algorithm,
+            bisecting_strategy = self.bskmeans_bisecting_strategy,
+        )
+        model.fit(data)
+        self.save_model(model, key)
         data['labels'] = model.labels_
         return (data, model.labels_, key)
+
 
     def dbscan(self, data: pd.DataFrame, eps: float, key: str='dbscan') -> tuple:
         model = DBSCAN(
@@ -119,8 +140,21 @@ class Modeller:
     def affprop(self, key: str='affprop'):
         pass
 
-    def agcluster(self, key: str='agcluster'):
-        pass
+    def agcluster(self, data: pd.DataFrame, k: int, key: str='agcluster'):
+        model = AgglomerativeClustering(
+            n_clusters = k,
+            metric = self.ac_metric,
+            memory = self.memory,
+            connectivity = self.connectivity,
+            compute_full_tree = self.compute_full_tree,
+            linkage = self.linkage,
+            distance_threshold = self.distance_threshold,
+            compute_distances = self.compute_distances,
+        )
+        model.fit(data)
+        self.save_model(model, key)
+        data['labels'] = model.labels_
+        return (data, model.labels_, key)
 
     def featagg(self, key: str='featagg'):
         pass
@@ -136,22 +170,6 @@ class Modeller:
 
     def spcluster(self, key: str='spcluster'):
         pass
-
-    def agglomerative_clustering(self, data: pd.DataFrame, k: int, key: str='ag-clustering') -> tuple:
-        model = AgglomerativeClustering(
-            n_clusters = k,
-            metric = self.ac_metric,
-            memory = self.memory,
-            connectivity = self.connectivity,
-            compute_full_tree = self.compute_full_tree,
-            linkage = self.linkage,
-            distance_threshold = self.distance_threshold,
-            compute_distances = self.compute_distances,
-        )
-        model.fit(data)
-        self.save_model(model, key)
-        data['labels'] = model.labels_
-        return (data, model.labels_, key)
 
 
 
@@ -184,6 +202,16 @@ class Modeller:
         self.gmixture_warm_start = False
         self.gmixture_verbose = 0
         self.gmixture_verbose_interval = 10
+
+        '''Bisecting K-Means'''
+        self.bskmeans_init = 'random'
+        self.bskmeans_n_init = 1
+        self.bskmeans_max_iter = 300
+        self.bskmeans_verbose = 0
+        self.bskmeans_tol = 1e-4
+        self.bskmeans_copy_x = True
+        self.bskmeans_algorithm = 'lloyd'
+        self.bskmeans_bisecting_strategy = 'biggest_inertia'
 
         '''DBSCAN configs'''
         self.dbscan_min_samples = 10
@@ -291,7 +319,8 @@ class Modeller:
 
 
     def config(self,
-            # kmeans
+
+            # K-Means
             kmeans_max_iter = None,
             kmeans_init = None,
             kmeans_n_init = None,
@@ -300,7 +329,7 @@ class Modeller:
             kmeans_copy_x = None,
             kmeans_algorithm = None,
 
-            # gmixture
+            # Gaussian Mixture
             gmixture_covariance_type = None,
             gmixture_tol = None,
             gmixture_reg_covar = None,
@@ -314,7 +343,17 @@ class Modeller:
             gmixture_verbose = None,
             gmixture_verbose_interval = None,
 
-            # dbscan
+            # Bisecting K-Means
+            bskmeans_init = None,
+            bskmeans_n_init = None,
+            bskmeans_max_iter = None,
+            bskmeans_verbose = None,
+            bskmeans_tol = None,
+            bskmeans_copy_x = None,
+            bskmeans_algorithm = None,
+            bskmeans_bisecting_strategy = None,
+
+            # DBSCAN
             dbscan_min_samples = None,
             dbscan_metric = None,
             dbscan_metric_params = None,
@@ -418,7 +457,7 @@ class Modeller:
             spcluster_verbose = None,
         ):
         
-        # kmeans
+        # K-Means
         self.kmeans_max_iter = kmeans_max_iter if kmeans_max_iter is not None else self.kmeans_max_iter
         self.kmeans_init = kmeans_init if kmeans_init is not None else self.kmeans_init
         self.kmeans_n_init = kmeans_n_init if kmeans_n_init is not None else self.kmeans_n_init
@@ -427,7 +466,7 @@ class Modeller:
         self.kmeans_copy_x = kmeans_copy_x if kmeans_copy_x is not None else self.kmeans_copy_x
         self.kmeans_algorithm = kmeans_algorithm if kmeans_algorithm is not None else self.kmeans_algorithm
 
-        # gmixture
+        # Gaussian Mixture
         self.gmixture_covariance_type = gmixture_covariance_type if gmixture_covariance_type is not None else self.gmixture_covariance_type
         self.gmixture_tol = gmixture_tol if gmixture_tol is not None else self.gmixture_tol
         self.gmixture_reg_covar = gmixture_reg_covar if gmixture_reg_covar is not None else self.gmixture_reg_covar
@@ -441,7 +480,17 @@ class Modeller:
         self.gmixture_verbose = gmixture_verbose if gmixture_verbose is not None else self.gmixture_verbose
         self.gmixture_verbose_interval = gmixture_verbose_interval if gmixture_verbose_interval is not None else self.gmixture_verbose_interval
 
-        # dbscan
+        # Bisecting K-Means
+        self.bskmeans_init = bskmeans_init if bskmeans_init is not None else self.bskmeans_init
+        self.bskmeans_n_init = bskmeans_n_init if bskmeans_n_init is not None else self.bskmeans_n_init
+        self.bskmeans_max_iter = bskmeans_max_iter if bskmeans_max_iter is not None else self.bskmeans_max_iter
+        self.bskmeans_verbose = bskmeans_verbose if bskmeans_verbose is not None else self.bskmeans_verbose
+        self.bskmeans_tol = bskmeans_tol if bskmeans_tol is not None else self.bskmeans_tol
+        self.bskmeans_copy_x = bskmeans_copy_x if bskmeans_copy_x is not None else self.bskmeans_copy_x
+        self.bskmeans_algorithm = bskmeans_algorithm if bskmeans_algorithm is not None else self.bskmeans_algorithm
+        self.bskmeans_bisecting_strategy = bskmeans_bisecting_strategy if bskmeans_bisecting_strategy is not None else self.bskmeans_bisecting_strategy
+
+        # DBSCAN
         self.dbscan_min_samples = dbscan_min_samples if dbscan_min_samples is not None else self.dbscan_min_samples
         self.dbscan_metric = dbscan_metric if dbscan_metric is not None else self.dbscan_metric
         self.dbscan_metric_params = dbscan_metric_params if dbscan_metric_params is not None else self.dbscan_metric_params
