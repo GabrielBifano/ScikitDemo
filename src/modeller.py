@@ -121,13 +121,13 @@ class Modeller:
     def dbscan(self, data: pd.DataFrame, eps: float, key: str='dbscan') -> tuple:
         model = DBSCAN(
             eps=eps,
-            min_samples = self.min_samples,
-            metric = self.dbs_metric,
-            metric_params = self.metric_params,
-            algorithm = self.dbs_algorithm,
-            leaf_size = self.leaf_size,
-            p = self.p,
-            n_jobs = self.n_jobs,
+            min_samples = self.dbscan_min_samples,
+            metric = self.dbscan_metric,
+            metric_params = self.dbscan_metric_params,
+            algorithm = self.dbscan_algorithm,
+            leaf_size = self.dbscan_leaf_size,
+            p = self.dbscan_p,
+            n_jobs = self.dbscan_n_jobs,
         )
         model.fit(data)
         self.save_model(model, key)
@@ -143,13 +143,13 @@ class Modeller:
     def agcluster(self, data: pd.DataFrame, k: int, key: str='agcluster'):
         model = AgglomerativeClustering(
             n_clusters = k,
-            metric = self.ac_metric,
-            memory = self.memory,
-            connectivity = self.connectivity,
-            compute_full_tree = self.compute_full_tree,
-            linkage = self.linkage,
-            distance_threshold = self.distance_threshold,
-            compute_distances = self.compute_distances,
+            metric = self.agcluster_ac_metric,
+            memory = self.agcluster_memory,
+            connectivity = self.agcluster_connectivity,
+            compute_full_tree = self.agcluster_compute_full_tree,
+            linkage = self.agcluster_linkage,
+            distance_threshold = self.agcluster_distance_threshold,
+            compute_distances = self.agcluster_compute_distances,
         )
         model.fit(data)
         self.save_model(model, key)
