@@ -163,7 +163,7 @@ class Modeller:
         data['labels'] = model.labels_
         return (data, model.labels_, key)
 
-    def affprop(self, key: str='affprop'):
+    def affprop(self, data: pd.DataFrame, key: str='affprop'):
         model = AffinityPropagation(
             damping = self.affprop_damping,
             max_iter = self.affprop_max_iter,
