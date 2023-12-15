@@ -9,6 +9,8 @@ from sklearn.cluster import DBSCAN
 from sklearn.cluster import HDBSCAN
 from sklearn.cluster import AgglomerativeClustering
 from sklearn.cluster import FeatureAgglomeration
+from sklearn.cluster import Birch
+from sklearn.cluster import MeanShift
 from sklearn.metrics import silhouette_score
 
 from ansi import ANSI
@@ -194,10 +196,29 @@ class Modeller:
         data['labels'] = model.labels_
         return (data, model.labels_, key)
 
-    def birch(self, key: str='birch'):
-        pass
+    def birch(self, data: pd.DataFrame, k: int, key: str='birch'):
+        model = Birch(
+            n_clusters=k,
+            threshold=self.birch_threshold,
+            branching_factor=self.birch_branching_factor,
+            compute_labels=self.birch_compute_labels,
+            copy=self.birch_copy,
+        )
+        model.fit(data)
+        self.save_model(model, key)
+        data['labels'] = model.labels_
+        return (data, model.labels_, key)
 
     def meanshift(self, key: str='meanshift'):
+        model = MeanShift(
+            n_jobs = self.meanshift_n_jobs,
+            bandwidth = self.meanshift_bandwidth,
+            seeds = self.meanshift_seeds,
+            bin_seeding = self.meanshift_bin_seeding,
+            min_bin_freq = self.meanshift_min_bin_freq,
+            cluster_all = self.meanshift_cluster_all,
+            max_iter = self.meanshift_max_iter,
+        )
         pass
 
     def optics(self, key: str='optics'):
