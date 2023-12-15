@@ -11,6 +11,7 @@ from sklearn.cluster import AgglomerativeClustering
 from sklearn.cluster import FeatureAgglomeration
 from sklearn.cluster import Birch
 from sklearn.cluster import MeanShift
+from sklearn.cluster import OPTICS
 from sklearn.metrics import silhouette_score
 
 from ansi import ANSI
@@ -209,7 +210,7 @@ class Modeller:
         data['labels'] = model.labels_
         return (data, model.labels_, key)
 
-    def meanshift(self, key: str='meanshift'):
+    def meanshift(self, data: pd.DataFrame, k: int, key: str='meanshift'):
         model = MeanShift(
             n_jobs = self.meanshift_n_jobs,
             bandwidth = self.meanshift_bandwidth,
@@ -219,10 +220,33 @@ class Modeller:
             cluster_all = self.meanshift_cluster_all,
             max_iter = self.meanshift_max_iter,
         )
-        pass
+        model.fit(data)
+        self.save_model(model, key)
+        data['labels'] = model.labels_
+        return (data, model.labels_, key)
 
-    def optics(self, key: str='optics'):
-        pass
+    def optics(self, data: pd.DataFrame, eps: int=None, key: str='optics'):
+        eps = eps if eps else self.optics_eps
+        model = OPTICS(
+            eps = eps,
+            min_samples = self.optics_min_samples,
+            max_eps = self.optics_max_eps,
+            metric = self.optics_metric,
+            p = self.optics_p,
+            metric_params = self.optics_metric_params,
+            cluster_method = self.optics_cluster_method,
+            xi = self.optics_xi,
+            predecessor_correction = self.optics_predecessor_correction,
+            min_cluster_size = self.optics_min_cluster_size,
+            algorithm = self.optics_algorithm,
+            leaf_size = self.optics_leaf_size,
+            memory = self.optics_memory,
+            n_jobs = self.optics_n_jobs,
+        )
+        model.fit(data)
+        self.save_model(model, key)
+        data['labels'] = model.labels_
+        return (data, model.labels_, key)
 
     def spcluster(self, key: str='spcluster'):
         pass
