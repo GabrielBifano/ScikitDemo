@@ -8,6 +8,7 @@ from sklearn.cluster import BisectingKMeans
 from sklearn.cluster import DBSCAN
 from sklearn.cluster import HDBSCAN
 from sklearn.cluster import AgglomerativeClustering
+from sklearn.cluster import FeatureAgglomeration
 from sklearn.metrics import silhouette_score
 
 from ansi import ANSI
@@ -134,8 +135,28 @@ class Modeller:
         data['labels'] = model.labels_
         return (data, model.labels_, key)
 
-    def hdbscan(self, key: str='hdbscan'):
-        pass
+    def hdbscan(self, data: pd.DataFrame, eps, key: str='hdbscan'):
+        model = HDBSCAN(
+            min_cluster_size=self.hdbscan_min_cluster_size,
+            min_samples=self.hdbscan_min_samples,
+            # cluster_selection_epsilon=self.hdbscan_cluster_selection_epsilon,
+            cluster_selection_epsilon=eps,
+            max_cluster_size=self.hdbscan_max_cluster_size,
+            metric=self.hdbscan_metric,
+            metric_params=self.hdbscan_metric_params,
+            alpha=self.hdbscan_alpha,
+            algorithm=self.hdbscan_algorithm,
+            leaf_size=self.hdbscan_leaf_size,
+            n_jobs=self.hdbscan_n_jobs,
+            cluster_selection_method=self.hdbscan_cluster_selection_method,
+            allow_single_cluster=self.hdbscan_allow_single_cluster,
+            store_centers=self.hdbscan_store_centers,
+            copy=self.hdbscan_copy
+        )
+        model.fit(data)
+        self.save_model(model, key)
+        data['labels'] = model.labels_
+        return (data, model.labels_, key)
 
     def affprop(self, key: str='affprop'):
         pass
@@ -156,8 +177,22 @@ class Modeller:
         data['labels'] = model.labels_
         return (data, model.labels_, key)
 
-    def featagg(self, key: str='featagg'):
-        pass
+    def featagg(self, data: pd.DataFrame, k: int, key: str='featagg'):
+        model = FeatureAgglomeration(
+            n_clusters = k,
+            metric = self.featagg_metric,
+            memory = self.featagg_memory,
+            connectivity = self.featagg_connectivity,
+            compute_full_tree = self.featagg_compute_full_tree,
+            linkage = self.featagg_linkage,
+            pooling_func =  self.featagg_pooling_func,
+            distance_threshold = self.featagg_distance_threshold,
+            compute_distances = self.featagg_compute_distances,
+        )
+        model.fit(data)
+        self.save_model(model, key)
+        data['labels'] = model.labels_
+        return (data, model.labels_, key)
 
     def birch(self, key: str='birch'):
         pass
