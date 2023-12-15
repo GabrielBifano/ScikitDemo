@@ -13,6 +13,7 @@ from sklearn.cluster import Birch
 from sklearn.cluster import MeanShift
 from sklearn.cluster import OPTICS
 from sklearn.cluster import SpectralClustering
+from sklearn.cluster import AffinityPropagation
 from sklearn.metrics import silhouette_score
 
 from ansi import ANSI
@@ -163,7 +164,20 @@ class Modeller:
         return (data, model.labels_, key)
 
     def affprop(self, key: str='affprop'):
-        pass
+        model = AffinityPropagation(
+            damping = self.affprop_damping,
+            max_iter = self.affprop_max_iter,
+            convergence_iter = self.affprop_convergence_iter,
+            copy = self.affprop_copy,
+            preference = self.affprop_preference,
+            affinity = self.affprop_affinity,
+            verbose = self.affprop_verbose,
+            random_state = self.rand(),
+        )
+        model.fit(data)
+        self.save_model(model, key)
+        data['labels'] = model.labels_
+        return (data, model.labels_, key)
 
     def agcluster(self, data: pd.DataFrame, k: int, key: str='agcluster'):
         model = AgglomerativeClustering(
