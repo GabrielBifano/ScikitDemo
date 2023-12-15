@@ -12,6 +12,7 @@ from sklearn.cluster import FeatureAgglomeration
 from sklearn.cluster import Birch
 from sklearn.cluster import MeanShift
 from sklearn.cluster import OPTICS
+from sklearn.cluster import SpectralClustering
 from sklearn.metrics import silhouette_score
 
 from ansi import ANSI
@@ -248,8 +249,28 @@ class Modeller:
         data['labels'] = model.labels_
         return (data, model.labels_, key)
 
-    def spcluster(self, key: str='spcluster'):
-        pass
+    def spcluster(self, data: pd.DataFrame, k: int, key: str='spcluster'):
+        model = SpectralClustering(
+            n_clusters = k,
+            eigen_solver = self.spcluster_eigen_solver,
+            n_components = self.spcluster_n_components,
+            random_state = self.rand(),
+            n_init = self.spcluster_n_init,
+            gamma = self.spcluster_gamma,
+            affinity = self.spcluster_affinity,
+            n_neighbors = self.spcluster_n_neighbors,
+            eigen_tol = self.spcluster_eigen_tol,
+            assign_labels = self.spcluster_assign_labels,
+            degree = self.spcluster_degree,
+            coef0 = self.spcluster_coef0,
+            kernel_params = self.spcluster_kernel_params,
+            n_jobs = self.spcluster_n_jobs,
+            verbose = self.spcluster_verbose
+        )
+        model.fit(data)
+        self.save_model(model, key)
+        data['labels'] = model.labels_
+        return (data, model.labels_, key)
 
 
 
@@ -381,7 +402,6 @@ class Modeller:
         self.optics_n_jobs = None
 
         '''Spectral Clustering configs'''
-        self.spcluster_n_clusters = 8
         self.spcluster_eigen_solver = None
         self.spcluster_n_components = None
         self.spcluster_n_init = 10
