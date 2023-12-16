@@ -182,7 +182,7 @@ class Modeller:
     def agcluster(self, data: pd.DataFrame, k: int, key: str='agcluster'):
         model = AgglomerativeClustering(
             n_clusters = k,
-            metric = self.agcluster_ac_metric,
+            metric = self.agcluster_metric,
             memory = self.agcluster_memory,
             connectivity = self.agcluster_connectivity,
             compute_full_tree = self.agcluster_compute_full_tree,
@@ -225,7 +225,7 @@ class Modeller:
         data['labels'] = model.labels_
         return (data, model.labels_, key)
 
-    def meanshift(self, data: pd.DataFrame, k: int, key: str='meanshift'):
+    def meanshift(self, data: pd.DataFrame, key: str='meanshift'):
         model = MeanShift(
             n_jobs = self.meanshift_n_jobs,
             bandwidth = self.meanshift_bandwidth,
@@ -555,7 +555,6 @@ class Modeller:
             optics_n_jobs = None,
 
             # Spectral Clustering
-            spcluster_n_clusters = None,
             spcluster_eigen_solver = None,
             spcluster_n_components = None,
             spcluster_n_init = None,
@@ -692,7 +691,6 @@ class Modeller:
         self.optics_n_jobs = optics_n_jobs if optics_n_jobs is not None else self.optics_n_jobs
 
         # Spectral Clustering
-        self.spcluster_n_clusters = spcluster_n_clusters if spcluster_n_clusters is not None else self.spcluster_n_clusters
         self.spcluster_eigen_solver = spcluster_eigen_solver if spcluster_eigen_solver is not None else self.spcluster_eigen_solver
         self.spcluster_n_components = spcluster_n_components if spcluster_n_components is not None else self.spcluster_n_components
         self.spcluster_n_init = spcluster_n_init if spcluster_n_init is not None else self.spcluster_n_init
