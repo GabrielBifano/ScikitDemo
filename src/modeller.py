@@ -66,7 +66,7 @@ class Modeller:
         opt = range_cl[np.argmax(scores)]
         return opt
 
-    def kmeans(self, data: pd.DataFrame, k: int, key: str='kmeans') -> tuple:
+    def kmeans(self, data: pd.DataFrame, k: int, key: str='kmeans', copy: bool=False, save: bool=False) -> tuple:
         model = KMeans(
             n_clusters = k,
             max_iter = self.kmeans_max_iter,
@@ -79,11 +79,15 @@ class Modeller:
             random_state = self.rand(),
         )
         model.fit(data)
-        self.save_model(model, key)
-        data['labels'] = model.labels_
-        return (data, model.labels_, key)
+        if save:
+            self.save_model(model, key)
+        cp = data
+        if copy:
+            cp = data.copy()
+        cp['labels'] = model.predict(data)
+        return (cp, data['labels'], key)
 
-    def gmixture(self, data: pd.DataFrame, n_components: int, key: str='gmixture') -> tuple:
+    def gmixture(self, data: pd.DataFrame, n_components: int, key: str='gmixture', copy: bool=False, save: bool=False) -> tuple:
         model = GaussianMixture(
             n_components = n_components,
             covariance_type = self.gmixture_covariance_type,
@@ -101,11 +105,15 @@ class Modeller:
             verbose_interval = self.gmixture_verbose_interval,
         )
         model.fit(data)
-        self.save_model(model, key)
-        data['labels'] = model.predict(data)
-        return (data, data['labels'], key)
+        if save:
+            self.save_model(model, key)
+        cp = data
+        if copy:
+            cp = data.copy()
+        cp['labels'] = model.predict(data)
+        return (cp, data['labels'], key)
 
-    def bskmeans(self, data: pd.DataFrame, k: int, key: str='kmeans') -> tuple:
+    def bskmeans(self, data: pd.DataFrame, k: int, key: str='bskmeans', copy: bool=False, save: bool=False) -> tuple:
         model = BisectingKMeans(
             n_clusters = k,
             init = self.bskmeans_init,
@@ -119,9 +127,13 @@ class Modeller:
             bisecting_strategy = self.bskmeans_bisecting_strategy,
         )
         model.fit(data)
-        self.save_model(model, key)
-        data['labels'] = model.labels_
-        return (data, model.labels_, key)
+        if save:
+            self.save_model(model, key)
+        cp = data
+        if copy:
+            cp = data.copy()
+        cp['labels'] = model.predict(data)
+        return (cp, data['labels'], key)
 
 
     def dbscan(self, data: pd.DataFrame, eps: float, key: str='dbscan') -> tuple:
