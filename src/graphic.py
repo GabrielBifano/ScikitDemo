@@ -16,6 +16,7 @@ class Graphic:
     axes_it = iter(axes.flatten())
     
     for key in dataframes:
+      
       X = dataframes[key].values
       y = dataframes[key]['labels']
       ax = next(axes_it)
