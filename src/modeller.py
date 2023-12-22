@@ -85,7 +85,7 @@ class Modeller:
         if copy:
             cp = data.copy()
         cp['labels'] = model.predict(data)
-        return (cp, data['labels'], key)
+        return (cp, cp['labels'], key)
 
     def gmixture(self, data: pd.DataFrame, n_components: int, key: str='gmixture', copy: bool=False, save: bool=False) -> tuple:
         model = GaussianMixture(
@@ -111,7 +111,7 @@ class Modeller:
         if copy:
             cp = data.copy()
         cp['labels'] = model.predict(data)
-        return (cp, data['labels'], key)
+        return (cp, cp['labels'], key)
 
     def bskmeans(self, data: pd.DataFrame, k: int, key: str='bskmeans', copy: bool=False, save: bool=False) -> tuple:
         model = BisectingKMeans(
@@ -133,10 +133,10 @@ class Modeller:
         if copy:
             cp = data.copy()
         cp['labels'] = model.predict(data)
-        return (cp, data['labels'], key)
+        return (cp, cp['labels'], key)
 
 
-    def dbscan(self, data: pd.DataFrame, eps: float, key: str='dbscan') -> tuple:
+    def dbscan(self, data: pd.DataFrame, eps: float, key: str='dbscan', copy: bool=False, save: bool=False) -> tuple:
         model = DBSCAN(
             eps=eps,
             min_samples = self.dbscan_min_samples,
@@ -148,11 +148,15 @@ class Modeller:
             n_jobs = self.dbscan_n_jobs,
         )
         model.fit(data)
-        self.save_model(model, key)
-        data['labels'] = model.labels_
-        return (data, model.labels_, key)
+        if save:
+            self.save_model(model, key)
+        cp = data
+        if copy:
+            cp = data.copy()
+        cp['labels'] = model.labels_
+        return (cp, cp['labels'], key)
 
-    def hdbscan(self, data: pd.DataFrame, eps, key: str='hdbscan'):
+    def hdbscan(self, data: pd.DataFrame, eps, key: str='hdbscan', copy: bool=False, save: bool=False):
         model = HDBSCAN(
             min_cluster_size=self.hdbscan_min_cluster_size,
             min_samples=self.hdbscan_min_samples,
@@ -171,11 +175,15 @@ class Modeller:
             copy=self.hdbscan_copy
         )
         model.fit(data)
-        self.save_model(model, key)
-        data['labels'] = model.labels_
-        return (data, model.labels_, key)
+        if save:
+            self.save_model(model, key)
+        cp = data
+        if copy:
+            cp = data.copy()
+        cp['labels'] = model.labels_
+        return (cp, cp['labels'], key)
 
-    def affprop(self, data: pd.DataFrame, key: str='affprop'):
+    def affprop(self, data: pd.DataFrame, key: str='affprop', copy: bool=False, save: bool=False):
         model = AffinityPropagation(
             damping = self.affprop_damping,
             max_iter = self.affprop_max_iter,
@@ -187,11 +195,15 @@ class Modeller:
             random_state = self.rand(),
         )
         model.fit(data)
-        self.save_model(model, key)
-        data['labels'] = model.labels_
-        return (data, model.labels_, key)
+        if save:
+            self.save_model(model, key)
+        cp = data
+        if copy:
+            cp = data.copy()
+        cp['labels'] = model.labels_
+        return (cp, cp['labels'], key)
 
-    def agcluster(self, data: pd.DataFrame, k: int, key: str='agcluster'):
+    def agcluster(self, data: pd.DataFrame, k: int, key: str='agcluster', copy: bool=False, save: bool=False):
         model = AgglomerativeClustering(
             n_clusters = k,
             metric = self.agcluster_metric,
@@ -203,11 +215,15 @@ class Modeller:
             compute_distances = self.agcluster_compute_distances,
         )
         model.fit(data)
-        self.save_model(model, key)
-        data['labels'] = model.labels_
-        return (data, model.labels_, key)
+        if save:
+            self.save_model(model, key)
+        cp = data
+        if copy:
+            cp = data.copy()
+        cp['labels'] = model.labels_
+        return (cp, cp['labels'], key)
 
-    def featagg(self, data: pd.DataFrame, k: int, key: str='featagg'):
+    def featagg(self, data: pd.DataFrame, k: int, key: str='featagg', copy: bool=False, save: bool=False):
         model = FeatureAgglomeration(
             n_clusters = k,
             metric = self.featagg_metric,
@@ -220,11 +236,15 @@ class Modeller:
             compute_distances = self.featagg_compute_distances,
         )
         model.fit(data)
-        self.save_model(model, key)
-        data['labels'] = model.labels_
-        return (data, model.labels_, key)
+        if save:
+            self.save_model(model, key)
+        cp = data
+        if copy:
+            cp = data.copy()
+        cp['labels'] = model.labels_
+        return (cp, cp['labels'], key)
 
-    def birch(self, data: pd.DataFrame, k: int, key: str='birch'):
+    def birch(self, data: pd.DataFrame, k: int, key: str='birch', copy: bool=False, save: bool=False):
         model = Birch(
             n_clusters=k,
             threshold=self.birch_threshold,
@@ -233,11 +253,15 @@ class Modeller:
             copy=self.birch_copy,
         )
         model.fit(data)
-        self.save_model(model, key)
-        data['labels'] = model.labels_
-        return (data, model.labels_, key)
+        if save:
+            self.save_model(model, key)
+        cp = data
+        if copy:
+            cp = data.copy()
+        cp['labels'] = model.labels_
+        return (cp, cp['labels'], key)
 
-    def meanshift(self, data: pd.DataFrame, key: str='meanshift'):
+    def meanshift(self, data: pd.DataFrame, key: str='meanshift', copy: bool=False, save: bool=False):
         model = MeanShift(
             n_jobs = self.meanshift_n_jobs,
             bandwidth = self.meanshift_bandwidth,
@@ -248,11 +272,15 @@ class Modeller:
             max_iter = self.meanshift_max_iter,
         )
         model.fit(data)
-        self.save_model(model, key)
-        data['labels'] = model.labels_
-        return (data, model.labels_, key)
+        if save:
+            self.save_model(model, key)
+        cp = data
+        if copy:
+            cp = data.copy()
+        cp['labels'] = model.labels_
+        return (cp, cp['labels'], key)
 
-    def optics(self, data: pd.DataFrame, eps: int=None, key: str='optics'):
+    def optics(self, data: pd.DataFrame, eps: int=None, key: str='optics', copy: bool=False, save: bool=False):
         eps = eps if eps else self.optics_eps
         model = OPTICS(
             eps = eps,
@@ -271,11 +299,15 @@ class Modeller:
             n_jobs = self.optics_n_jobs,
         )
         model.fit(data)
-        self.save_model(model, key)
-        data['labels'] = model.labels_
-        return (data, model.labels_, key)
+        if save:
+            self.save_model(model, key)
+        cp = data
+        if copy:
+            cp = data.copy()
+        cp['labels'] = model.labels_
+        return (cp, cp['labels'], key)
 
-    def spcluster(self, data: pd.DataFrame, k: int, key: str='spcluster'):
+    def spcluster(self, data: pd.DataFrame, k: int, key: str='spcluster', copy: bool=False, save: bool=False):
         model = SpectralClustering(
             n_clusters = k,
             eigen_solver = self.spcluster_eigen_solver,
@@ -294,9 +326,13 @@ class Modeller:
             verbose = self.spcluster_verbose
         )
         model.fit(data)
-        self.save_model(model, key)
-        data['labels'] = model.labels_
-        return (data, model.labels_, key)
+        if save:
+            self.save_model(model, key)
+        cp = data
+        if copy:
+            cp = data.copy()
+        cp['labels'] = model.labels_
+        return (cp, cp['labels'], key)
 
 
 
